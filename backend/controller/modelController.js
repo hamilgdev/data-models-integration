@@ -1,27 +1,30 @@
-import { fromEnv } from "@aws-sdk/credential-providers";
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient, ScanCommand, GetCommand } from "@aws-sdk/lib-dynamodb";
+import { fromEnv } from '@aws-sdk/credential-providers';
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
+import {
+  DynamoDBDocumentClient,
+  ScanCommand,
+  GetCommand,
+} from '@aws-sdk/lib-dynamodb';
 
-import dotenv from "dotenv";
- 
-dotenv.config()
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const getModels = async (req, res) => {
-  
-  if (process.env.NODE_ENV == 'production'){
-    var client = new DynamoDBClient({ 
-      region: process.env.AWS_REGION, 
+  if (process.env.NODE_ENV == 'production') {
+    var client = new DynamoDBClient({
+      region: process.env.AWS_REGION,
     });
-  }else{
-    var client = new DynamoDBClient({ 
-      region: process.env.AWS_REGION, 
-      credentials: fromEnv() 
+  } else {
+    var client = new DynamoDBClient({
+      region: process.env.AWS_REGION,
+      credentials: fromEnv(),
     });
   }
 
   const docClient = DynamoDBDocumentClient.from(client);
   const command = new ScanCommand({
-    TableName: "tb_models",
+    TableName: 'tb_models',
   });
 
   const response = await docClient.send(command);
@@ -32,30 +35,28 @@ const getModels = async (req, res) => {
   }
 
   res.contentType = 'application/json';
-  console.log(models);
+  console.log({ models });
   res.json(models);
 
   return res;
-
 };
 
 const getModelsById = async (req, res) => {
-
-  if (process.env.NODE_ENV == 'production'){
-    var client = new DynamoDBClient({ 
-      region: process.env.AWS_REGION, 
+  if (process.env.NODE_ENV == 'production') {
+    var client = new DynamoDBClient({
+      region: process.env.AWS_REGION,
     });
-  }else{
-    var client = new DynamoDBClient({ 
-      region: process.env.AWS_REGION, 
-      credentials: fromEnv() 
+  } else {
+    var client = new DynamoDBClient({
+      region: process.env.AWS_REGION,
+      credentials: fromEnv(),
     });
   }
 
   const docClient = DynamoDBDocumentClient.from(client);
 
   const command = new GetCommand({
-    TableName: "tb_models",
+    TableName: 'tb_models',
     Key: {
       id: req.params.id,
     },
@@ -63,8 +64,8 @@ const getModelsById = async (req, res) => {
 
   const response = await docClient.send(command);
   console.log(response.Item);
-  res.json(response.Item)
+  res.json(response.Item);
   return res;
 };
 
-export { getModelsById, getModels }
+export { getModelsById, getModels };
